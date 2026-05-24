@@ -19,31 +19,32 @@ public sealed class DockerCliService : IDockerService
 
         var containers = new List<DockerContainerInfo>();
 
-        if (result.ExitCode == 0)
+        if (result.ExitCode != 0)
         {
-            foreach (var line in result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
-            {
-                var parts = line.Split('\t');
-
-                if (parts.Length < 4)
-                {
-                    continue;
-                }
-
-                var projectName = parts.Length >= 5 && !string.IsNullOrWhiteSpace(parts[4])
-                    ? parts[4]
-                    : "Pozostałe";
-
-                containers.Add(new DockerContainerInfo(
-                    parts[0],
-                    parts[1],
-                    parts[2],
-                    parts[3],
-                    projectName,
-                    parts[3].StartsWith("Up", StringComparison.OrdinalIgnoreCase)));
-            }
+            return containers;
         }
 
+        foreach (var line in result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = line.Split('\t');
+
+            if (parts.Length < 4)
+            {
+                continue;
+            }
+
+            var projectName = parts.Length >= 5 && !string.IsNullOrWhiteSpace(parts[4])
+                ? parts[4]
+                : "Pozostałe";
+
+            containers.Add(new DockerContainerInfo(
+                parts[0],
+                parts[1],
+                parts[2],
+                parts[3],
+                projectName,
+                parts[3].StartsWith("Up", StringComparison.OrdinalIgnoreCase)));
+        }
 
         return containers;
     }
@@ -85,7 +86,7 @@ public sealed class DockerCliService : IDockerService
         }
 
         using var process = Process.Start(startInfo)
-            ?? throw new InvalidOperationException("Nie udalo sie uruchomic polecenia docker.");
+            ?? throw new InvalidOperationException("Nie udało się uruchomić polecenia docker.");
 
         var output = await process.StandardOutput.ReadToEndAsync();
         var error = await process.StandardError.ReadToEndAsync();

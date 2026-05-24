@@ -24,21 +24,16 @@
     </Window.Resources>
 
     <Grid ColumnDefinitions="*, *">
-        
         <Border Grid.Column="0"
                 Padding="20"
                 BorderBrush="#3E3E42"
                 BorderThickness="0,0,1,0">
             <Grid RowDefinitions="Auto, *">
-                
                 <StackPanel Grid.Row="0" Spacing="15" Margin="0,0,0,15">
-                    <Grid ColumnDefinitions="*, Auto">
-                        <TextBlock Grid.Column="0"
-                                   Text="Zasoby systemowe"
-                                   FontSize="20"
-                                   Foreground="LightGray"
-                                   FontWeight="SemiBold"/>
-                    </Grid>
+                    <TextBlock Text="Zasoby systemowe"
+                               FontSize="20"
+                               Foreground="LightGray"
+                               FontWeight="SemiBold"/>
 
                     <Grid ColumnDefinitions="*, Auto" Margin="0,8,0,5">
                         <TextBlock Grid.Column="0"
@@ -120,11 +115,10 @@
                             Height="32"
                             Padding="0"
                             Command="{Binding RefreshAllCommand}">
-                        <TextBlock Text="⟳"
+                        <TextBlock Text="↻"
                                    FontSize="18"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center">
-                        </TextBlock>
+                                   VerticalAlignment="Center"/>
                     </Button>
                 </Grid>
 
@@ -161,7 +155,7 @@
                                                         Padding="10"
                                                         Margin="4"
                                                         CornerRadius="6">
-                                                    <Grid RowDefinitions="Auto, Auto, Auto, Auto" ColumnDefinitions="*, Auto">
+                                                    <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto">
                                                         <TextBlock Grid.Row="0"
                                                                    Grid.Column="0"
                                                                    Text="{Binding Name}"
@@ -190,7 +184,6 @@
                                                                    Foreground="LightGray"
                                                                    FontSize="12"
                                                                    TextWrapping="Wrap"/>
-
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>

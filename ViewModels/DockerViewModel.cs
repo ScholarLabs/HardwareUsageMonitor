@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,19 +15,9 @@ public class DockerViewModel : ViewModelBase
 
     public string StatusText { get; private set; } = "Docker: -";
 
-    public DockerContainerInfo? SelectedContainer { get; set; }
-
     public ObservableCollection<DockerContainerInfo> Containers { get; } = new();
 
     public ObservableCollection<DockerProjectInfo> Projects { get; } = new();
-
-    public IAsyncRelayCommand StartCommand { get; }
-
-    public IAsyncRelayCommand StopCommand { get; }
-
-    public IAsyncRelayCommand<DockerContainerInfo> StartContainerCommand { get; }
-
-    public IAsyncRelayCommand<DockerContainerInfo> StopContainerCommand { get; }
 
     public IAsyncRelayCommand<DockerContainerInfo> ToggleContainerCommand { get; }
 
@@ -38,10 +29,6 @@ public class DockerViewModel : ViewModelBase
     public DockerViewModel(IDockerService service)
     {
         Service = service;
-        StartCommand = new AsyncRelayCommand(StartAsync);
-        StopCommand = new AsyncRelayCommand(StopAsync);
-        StartContainerCommand = new AsyncRelayCommand<DockerContainerInfo>(StartAsync);
-        StopContainerCommand = new AsyncRelayCommand<DockerContainerInfo>(StopAsync);
         ToggleContainerCommand = new AsyncRelayCommand<DockerContainerInfo>(ToggleAsync);
     }
 
@@ -49,73 +36,17 @@ public class DockerViewModel : ViewModelBase
     {
         try
         {
-            StatusText = "Docker: -";
-            OnPropertyChanged(nameof(StatusText));
-
             var containers = await Service.GetContainersAsync();
 
-            Containers.Clear();
-            foreach (var container in containers)
-            {
-                Containers.Add(container);
-            }
-
-            RefreshProjects();
-            StatusText = $"Docker: {Containers.Count} kontenerów";
+            UpdateContainers(containers);
+            UpdateProjects(containers);
+            SetStatus($"Docker: {Containers.Count} kontenerów");
         }
         catch (Exception exception)
         {
             Containers.Clear();
             Projects.Clear();
-            StatusText = $"Docker: blad {exception.Message}";
-        }
-
-        OnPropertyChanged(nameof(StatusText));
-    }
-
-    public async Task StartAsync()
-    {
-        await StartAsync(SelectedContainer);
-    }
-
-    public async Task StopAsync()
-    {
-        await StopAsync(SelectedContainer);
-    }
-
-    private async Task StartAsync(DockerContainerInfo? container)
-    {
-        if (container is null)
-        {
-            return;
-        }
-
-        try
-        {
-            await Service.StartContainerAsync(container);
-            await RefreshAsync();
-        }
-        catch (Exception)
-        {
-            OnPropertyChanged(nameof(StatusText));
-        }
-    }
-
-    private async Task StopAsync(DockerContainerInfo? container)
-    {
-        if (container is null)
-        {
-            return;
-        }
-
-        try
-        {
-            await Service.StopContainerAsync(container);
-            await RefreshAsync();
-        }
-        catch (Exception)
-        {
-            OnPropertyChanged(nameof(StatusText));
+            SetStatus($"Docker: błąd - {exception.Message}");
         }
     }
 
@@ -126,20 +57,40 @@ public class DockerViewModel : ViewModelBase
             return;
         }
 
-        if (container.IsRunning)
+        try
         {
-            await StopAsync(container);
-            return;
-        }
+            if (container.IsRunning)
+            {
+                await Service.StopContainerAsync(container);
+            }
+            else
+            {
+                await Service.StartContainerAsync(container);
+            }
 
-        await StartAsync(container);
+            await RefreshAsync();
+        }
+        catch (Exception exception)
+        {
+            SetStatus($"Docker: błąd - {exception.Message}");
+        }
     }
 
-    private void RefreshProjects()
+    private void UpdateContainers(IEnumerable<DockerContainerInfo> containers)
+    {
+        Containers.Clear();
+
+        foreach (var container in containers)
+        {
+            Containers.Add(container);
+        }
+    }
+
+    private void UpdateProjects(IEnumerable<DockerContainerInfo> containers)
     {
         Projects.Clear();
 
-        foreach (var group in Containers.GroupBy(container => container.ProjectName).OrderBy(group => group.Key))
+        foreach (var group in containers.GroupBy(container => container.ProjectName).OrderBy(group => group.Key))
         {
             var project = new DockerProjectInfo
             {
@@ -153,5 +104,11 @@ public class DockerViewModel : ViewModelBase
 
             Projects.Add(project);
         }
+    }
+
+    private void SetStatus(string statusText)
+    {
+        StatusText = statusText;
+        OnPropertyChanged(nameof(StatusText));
     }
 }

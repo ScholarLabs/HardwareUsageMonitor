@@ -14,7 +14,6 @@ public class MainWindowViewModel : ViewModelBase
 
     private bool _isRefreshing;
     private int _refreshCountdown = RefreshIntervalSeconds;
-    private double _refreshIconAngle;
 
     public SystemStatusViewModel System { get; }
 
@@ -23,8 +22,6 @@ public class MainWindowViewModel : ViewModelBase
     public IAsyncRelayCommand RefreshAllCommand { get; }
 
     public DispatcherTimer Timer { get; }
-
-    public DispatcherTimer SpinTimer { get; }
 
     public bool IsRefreshing
     {
@@ -46,12 +43,6 @@ public class MainWindowViewModel : ViewModelBase
 
     public string RefreshCountdownText => $"Odświeżanie za {RefreshCountdown}";
 
-    public double RefreshIconAngle
-    {
-        get => _refreshIconAngle;
-        private set => SetProperty(ref _refreshIconAngle, value);
-    }
-
     public double CpuUsage { get; private set; }
 
     public string CpuDisplay { get; private set; } = "-";
@@ -71,23 +62,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         System = system;
         Docker = docker;
-
         RefreshAllCommand = new AsyncRelayCommand(RefreshAllAsync);
 
         Timer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(1),
         };
-
         Timer.Tick += Timer_Tick;
         Timer.Start();
-
-        SpinTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(50),
-        };
-
-        SpinTimer.Tick += SpinTimer_Tick;
 
         _ = RefreshAllAsync();
     }
@@ -107,11 +89,6 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private void SpinTimer_Tick(object? sender, EventArgs e)
-    {
-        RefreshIconAngle = (RefreshIconAngle + 24) % 360;
-    }
-
     public async Task RefreshAllAsync()
     {
         if (IsRefreshing)
@@ -122,7 +99,6 @@ public class MainWindowViewModel : ViewModelBase
         try
         {
             IsRefreshing = true;
-            SpinTimer.Start();
 
             await System.RefreshAsync();
             UpdateSystemDisplay(System.LatestStats);
@@ -131,8 +107,6 @@ public class MainWindowViewModel : ViewModelBase
         }
         finally
         {
-            SpinTimer.Stop();
-            RefreshIconAngle = 0;
             RefreshCountdown = RefreshIntervalSeconds;
             IsRefreshing = false;
         }
@@ -154,7 +128,6 @@ public class MainWindowViewModel : ViewModelBase
             CpuDisplay = $"{stats.CpuUsagePercent:0.0}%";
             RamUsage = stats.MemoryUsagePercent;
             RamDisplay = $"{FormatBytes(stats.UsedMemoryBytes)} / {FormatBytes(stats.TotalMemoryBytes)}";
-
             UpdateCpuCores(System.LatestCpuCores);
         }
 

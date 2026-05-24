@@ -14,7 +14,7 @@ public class SystemStatusViewModel : ViewModelBase
 
     public string RamText { get; private set; } = "RAM: -";
 
-    public string LastUpdateText { get; private set; } = "Ostatnie odswiezenie: -";
+    public string LastUpdateText { get; private set; } = "Ostatnie odświeżenie: -";
 
     public SystemStats? LatestStats { get; private set; }
 
@@ -40,7 +40,7 @@ public class SystemStatusViewModel : ViewModelBase
 
             CpuText = $"CPU: {stats.CpuUsagePercent:0.00}%";
             RamText = $"RAM: {FormatBytes(stats.UsedMemoryBytes)} / {FormatBytes(stats.TotalMemoryBytes)} ({stats.MemoryUsagePercent:0.00}%)";
-            LastUpdateText = $"Ostatnie odswiezenie: {stats.Timestamp:HH:mm:ss}";
+            LastUpdateText = $"Ostatnie odświeżenie: {stats.Timestamp:HH:mm:ss}";
         }
         catch (Exception)
         {
@@ -66,9 +66,9 @@ public class SystemStatusViewModel : ViewModelBase
 
         if (megaBytes < 1024)
         {
-            return $"{megaBytes:0} MB"; // pokazujemy MB
+            return $"{megaBytes:0} MB";
         }
 
-        return $"{megaBytes / kiloByte:0.00} GB"; // pokazujemy GB
+        return $"{megaBytes / kiloByte:0.00} GB";
     }
 }
