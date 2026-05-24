@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\xsiad\\Desktop\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj": {}
+    "C:\\Users\\igord\\Desktop\\projects\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj": {}
   },
   "projects": {
-    "C:\\Users\\xsiad\\Desktop\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj": {
+    "C:\\Users\\igord\\Desktop\\projects\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\xsiad\\Desktop\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj",
+        "projectUniqueName": "C:\\Users\\igord\\Desktop\\projects\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj",
         "projectName": "HardwareUsageMonitor",
-        "projectPath": "C:\\Users\\xsiad\\Desktop\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj",
-        "packagesPath": "C:\\Users\\xsiad\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\xsiad\\Desktop\\HardwareUsageMonitor\\obj\\",
+        "projectPath": "C:\\Users\\igord\\Desktop\\projects\\HardwareUsageMonitor\\HardwareUsageMonitor.csproj",
+        "packagesPath": "C:\\Users\\igord\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\igord\\Desktop\\projects\\HardwareUsageMonitor\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\xsiad\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\igord\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

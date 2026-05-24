@@ -1,20 +1,113 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:HardwareUsageMonitor.ViewModels"
+        xmlns:conv="using:HardwareUsageMonitor.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
         x:Class="HardwareUsageMonitor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="HardwareUsageMonitor">
+        Title="HardwareUsageMonitor"
+        Background="#1E1E1E">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    <Window.Resources>
+        <conv:UsageToColorConverter x:Key="UsageColorConverter"/>
+    </Window.Resources>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid ColumnDefinitions="*, *">
+        
+        <Border Grid.Column="0" Padding="20" BorderBrush="#3E3E42" BorderThickness="0,0,1,0">
+            <StackPanel Spacing="15">
+                <TextBlock Text="Zasoby Systemowe" FontSize="20" Foreground="LightGray" FontWeight="SemiBold"/>
+                
+                <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,5">
+                    <TextBlock Grid.Column="0" Text="Pamięć RAM" Foreground="DarkGray" VerticalAlignment="Bottom"/>
+                    <TextBlock Grid.Column="1" Text="{Binding RamDisplay, FallbackValue='6.8 / 16 GB'}" Foreground="White" FontWeight="Bold"/>
+                </Grid>
+                
+                <ProgressBar Minimum="0" Maximum="100" 
+                             Value="{Binding RamUsage, FallbackValue=42.5}" 
+                             Foreground="{Binding RamUsage, Converter={StaticResource UsageColorConverter}, FallbackValue=Gold}"
+                             Height="15" ShowProgressText="False"/>
+                
+                <TextBlock Text="Zużycie CPU (Rdzenie)" Foreground="DarkGray" Margin="0,15,0,0"/>
+                
+                <ScrollViewer MaxHeight="400">
+                    <ItemsControl ItemsSource="{Binding CpuCores}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="50, *, 45" Margin="0,0,0,8">
+                                    <TextBlock Grid.Column="0" Text="{Binding Name, FallbackValue='Core X'}" 
+                                               VerticalAlignment="Center" Foreground="White"/>
+                                    
+                                    <ProgressBar Grid.Column="1" Minimum="0" Maximum="100" 
+                                                 Value="{Binding Usage, FallbackValue=45}" 
+                                                 Foreground="{Binding Usage, Converter={StaticResource UsageColorConverter}, FallbackValue=LimeGreen}" 
+                                                 Height="12" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    
+                                    <TextBlock Grid.Column="2" Text="{Binding Usage, StringFormat='{}{0:0}%', FallbackValue='45%'}" 
+                                               VerticalAlignment="Center" Foreground="LightGray" TextAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
 
+        <Border Grid.Column="1" Padding="20">
+            <Grid RowDefinitions="Auto, *">
+                <TextBlock Grid.Row="0" Text="Aktywne Kontenery Docker" FontSize="20" Foreground="LightGray" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Projects}" VerticalAlignment="Top">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,25">
+                                    
+                                    <Border Background="#3E3E42" Padding="10,5" CornerRadius="4" Margin="0,0,0,10" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding ProjectName, FallbackValue='moj-projekt-compose'}" 
+                                                   FontWeight="SemiBold" Foreground="#DEFF9A" FontSize="14"/>
+                                    </Border>
+
+                                    <ItemsControl ItemsSource="{Binding Containers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Columns="2" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#2D2D30" Padding="10" Margin="4" CornerRadius="6">
+                                                    <StackPanel Spacing="5">
+                                                        <TextBlock Text="{Binding Name, FallbackValue='nginx-proxy'}" 
+                                                                   FontWeight="Bold" Foreground="White" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                                                            <TextBlock Text="{Binding CpuUsage, StringFormat='CPU: {0:0.0}%', FallbackValue='CPU: 12.5%'}" 
+                                                                       Foreground="LightGray" FontSize="11"/>
+                                                            <TextBlock Text="{Binding RamUsage, StringFormat='RAM: {0}MB', FallbackValue='RAM: 256MB'}" 
+                                                                       Foreground="LightGray" FontSize="11"/>
+                                                        </StackPanel>
+
+                                                        <ToggleSwitch IsChecked="{Binding IsRunning, FallbackValue=True}" 
+                                                                      OnContent="ON" OffContent="OFF" 
+                                                                      HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        
+    </Grid>
 </Window>
