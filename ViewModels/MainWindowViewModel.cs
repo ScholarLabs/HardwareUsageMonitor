@@ -10,7 +10,7 @@ namespace HardwareUsageMonitor.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private const int RefreshIntervalSeconds = 5;
+    private const int RefreshIntervalSeconds = 1;
 
     private bool _isRefreshing;
     private int _refreshCountdown = RefreshIntervalSeconds;
