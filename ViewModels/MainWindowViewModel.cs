@@ -60,8 +60,6 @@ public class MainWindowViewModel : ViewModelBase
 
     public string RamDisplay { get; private set; } = "-";
 
-    public string LastUpdateDisplay { get; private set; } = "Ostatnie odswiezenie: -";
-
     public ObservableCollection<CpuCore> CpuCores { get; } = new();
 
     public MainWindowViewModel()
@@ -148,7 +146,6 @@ public class MainWindowViewModel : ViewModelBase
             CpuDisplay = "-";
             RamUsage = 0;
             RamDisplay = "-";
-            LastUpdateDisplay = "Ostatnie odswiezenie: -";
             CpuCores.Clear();
         }
         else
@@ -157,7 +154,6 @@ public class MainWindowViewModel : ViewModelBase
             CpuDisplay = $"{stats.CpuUsagePercent:0.0}%";
             RamUsage = stats.MemoryUsagePercent;
             RamDisplay = $"{FormatBytes(stats.UsedMemoryBytes)} / {FormatBytes(stats.TotalMemoryBytes)}";
-            LastUpdateDisplay = $"Ostatnie odswiezenie: {stats.Timestamp:HH:mm:ss}";
 
             UpdateCpuCores(System.LatestCpuCores);
         }
@@ -166,7 +162,6 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(CpuDisplay));
         OnPropertyChanged(nameof(RamUsage));
         OnPropertyChanged(nameof(RamDisplay));
-        OnPropertyChanged(nameof(LastUpdateDisplay));
     }
 
     private void UpdateCpuCores(IReadOnlyCollection<CpuCoreStats> cpuCores)

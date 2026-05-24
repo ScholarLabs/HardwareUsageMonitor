@@ -61,7 +61,7 @@ public class DockerViewModel : ViewModelBase
             }
 
             RefreshProjects();
-            StatusText = $"Docker: {Containers.Count} kontenerow";
+            StatusText = $"Docker: {Containers.Count} kontenerów";
         }
         catch (Exception exception)
         {
