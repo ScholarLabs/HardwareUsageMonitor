@@ -17,34 +17,33 @@ public sealed class DockerCliService : IDockerService
             "--format",
             "{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Label \"com.docker.compose.project\"}}");
 
-        if (result.ExitCode != 0)
-        {
-            throw new InvalidOperationException(result.Error.Trim());
-        }
-
         var containers = new List<DockerContainerInfo>();
 
-        foreach (var line in result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+        if (result.ExitCode == 0)
         {
-            var parts = line.Split('\t');
-
-            if (parts.Length < 4)
+            foreach (var line in result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
             {
-                continue;
+                var parts = line.Split('\t');
+
+                if (parts.Length < 4)
+                {
+                    continue;
+                }
+
+                var projectName = parts.Length >= 5 && !string.IsNullOrWhiteSpace(parts[4])
+                    ? parts[4]
+                    : "Pozostałe";
+
+                containers.Add(new DockerContainerInfo(
+                    parts[0],
+                    parts[1],
+                    parts[2],
+                    parts[3],
+                    projectName,
+                    parts[3].StartsWith("Up", StringComparison.OrdinalIgnoreCase)));
             }
-
-            var projectName = parts.Length >= 5 && !string.IsNullOrWhiteSpace(parts[4])
-                ? parts[4]
-                : "Pozostałe";
-
-            containers.Add(new DockerContainerInfo(
-                parts[0],
-                parts[1],
-                parts[2],
-                parts[3],
-                projectName,
-                parts[3].StartsWith("Up", StringComparison.OrdinalIgnoreCase)));
         }
+
 
         return containers;
     }
