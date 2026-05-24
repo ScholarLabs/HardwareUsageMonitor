@@ -24,56 +24,60 @@
     </Window.Resources>
 
     <Grid ColumnDefinitions="*, *">
+        
         <Border Grid.Column="0"
                 Padding="20"
                 BorderBrush="#3E3E42"
                 BorderThickness="0,0,1,0">
-            <StackPanel Spacing="15">
-                <Grid ColumnDefinitions="*, Auto">
-                    <TextBlock Grid.Column="0"
-                               Text="Zasoby systemowe"
-                               FontSize="20"
-                               Foreground="LightGray"
-                               FontWeight="SemiBold"/>
-                </Grid>
+            <Grid RowDefinitions="Auto, *">
+                
+                <StackPanel Grid.Row="0" Spacing="15" Margin="0,0,0,15">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="Zasoby systemowe"
+                                   FontSize="20"
+                                   Foreground="LightGray"
+                                   FontWeight="SemiBold"/>
+                    </Grid>
 
-                <TextBlock Text="{Binding LastUpdateDisplay}"
-                           Foreground="DarkGray"
-                           FontSize="12"/>
-
-                <Grid ColumnDefinitions="*, Auto" Margin="0,8,0,5">
-                    <TextBlock Grid.Column="0"
-                               Text="Pamięć RAM"
+                    <TextBlock Text="{Binding LastUpdateDisplay}"
                                Foreground="DarkGray"
-                               VerticalAlignment="Bottom"/>
-                    <TextBlock Grid.Column="1"
-                               Text="{Binding RamDisplay}"
-                               Foreground="White"
-                               FontWeight="Bold"/>
-                </Grid>
+                               FontSize="12"/>
 
-                <ProgressBar Minimum="0"
-                             Maximum="100"
-                             Value="{Binding RamUsage}"
-                             Foreground="{Binding RamUsage, Converter={StaticResource UsageColorConverter}}"
-                             Height="15"/>
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,8,0,5">
+                        <TextBlock Grid.Column="0"
+                                   Text="Pamięć RAM"
+                                   Foreground="DarkGray"
+                                   VerticalAlignment="Bottom"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding RamDisplay}"
+                                   Foreground="White"
+                                   FontWeight="Bold"/>
+                    </Grid>
 
-                <Grid ColumnDefinitions="*, Auto" Margin="0,15,0,5">
-                    <TextBlock Grid.Column="0"
-                               Text="Zużycie CPU"
-                               Foreground="DarkGray"
-                               VerticalAlignment="Bottom"/>
-                    <TextBlock Grid.Column="1"
-                               Text="{Binding CpuDisplay}"
-                               Foreground="White"
-                               FontWeight="Bold"/>
-                </Grid>
+                    <ProgressBar Minimum="0"
+                                 Maximum="100"
+                                 Value="{Binding RamUsage}"
+                                 Foreground="{Binding RamUsage, Converter={StaticResource UsageColorConverter}}"
+                                 Height="15"/>
 
-                <ScrollViewer MaxHeight="400">
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,15,0,5">
+                        <TextBlock Grid.Column="0"
+                                   Text="Zużycie CPU"
+                                   Foreground="DarkGray"
+                                   VerticalAlignment="Bottom"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding CpuDisplay}"
+                                   Foreground="White"
+                                   FontWeight="Bold"/>
+                    </Grid>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" Padding="0,0,15,0">
                     <ItemsControl ItemsSource="{Binding CpuCores}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="models:CpuCore">
-                                <Grid ColumnDefinitions="50, *, 45" Margin="0,0,0,8">
+                                <Grid ColumnDefinitions="70, *, 45" Margin="0,0,0,8">
                                     <TextBlock Grid.Column="0"
                                                Text="{Binding Name}"
                                                VerticalAlignment="Center"
@@ -98,15 +102,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-
-                <TextBlock Text="{Binding System.CpuText}"
-                           Foreground="#AFAFAF"
-                           FontSize="12"/>
-                <TextBlock Text="{Binding System.RamText}"
-                           Foreground="#AFAFAF"
-                           FontSize="12"
-                           TextWrapping="Wrap"/>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <Border Grid.Column="1" Padding="20">
@@ -140,7 +136,7 @@
                            Text="{Binding Docker.StatusText}"
                            Foreground="DarkGray"/>
 
-                <ScrollViewer Grid.Row="2">
+                <ScrollViewer Grid.Row="2" Padding="0,0,15,0">
                     <ItemsControl ItemsSource="{Binding Docker.Projects}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="models:DockerProjectInfo">
