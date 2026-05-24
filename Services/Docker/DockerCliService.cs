@@ -10,14 +10,22 @@ public sealed class DockerCliService : IDockerService
 {
     public async Task<IReadOnlyList<DockerContainerInfo>> GetContainersAsync()
     {
-        var result = await RunDockerAsync(
-            "container",
-            "ls",
-            "-a",
-            "--format",
-            "{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Label \"com.docker.compose.project\"}}");
-
         var containers = new List<DockerContainerInfo>();
+        CommandResult result;
+
+        try
+        {
+            result = await RunDockerAsync(
+                "container",
+                "ls",
+                "-a",
+                "--format",
+                "{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Label \"com.docker.compose.project\"}}");
+        }
+        catch
+        {
+            return containers;
+        }
 
         if (result.ExitCode != 0)
         {
