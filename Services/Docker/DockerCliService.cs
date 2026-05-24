@@ -10,7 +10,12 @@ public sealed class DockerCliService : IDockerService
 {
     public async Task<IReadOnlyList<DockerContainerInfo>> GetContainersAsync()
     {
-        var result = await RunDockerAsync("container", "ls", "-a", "--format", "{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}");
+        var result = await RunDockerAsync(
+            "container",
+            "ls",
+            "-a",
+            "--format",
+            "{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Label \"com.docker.compose.project\"}}");
 
         if (result.ExitCode != 0)
         {
@@ -28,11 +33,16 @@ public sealed class DockerCliService : IDockerService
                 continue;
             }
 
+            var projectName = parts.Length >= 5 && !string.IsNullOrWhiteSpace(parts[4])
+                ? parts[4]
+                : "Pozostałe";
+
             containers.Add(new DockerContainerInfo(
                 parts[0],
                 parts[1],
                 parts[2],
                 parts[3],
+                projectName,
                 parts[3].StartsWith("Up", StringComparison.OrdinalIgnoreCase)));
         }
 

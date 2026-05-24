@@ -10,6 +10,11 @@ public abstract class SystemMonitorServiceBase : ISystemMonitorService
 {
     public abstract SystemStats GetSystemStats();
 
+    public virtual IReadOnlyList<CpuCoreStats> GetCpuCores()
+    {
+        return [];
+    }
+
     public virtual IReadOnlyList<ProcessInfo> GetProcesses()
     {
         return Process.GetProcesses()

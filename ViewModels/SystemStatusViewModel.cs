@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using HardwareUsageMonitor.Models;
 using HardwareUsageMonitor.Services.SystemMonitoring;
 
 namespace HardwareUsageMonitor.ViewModels;
@@ -13,6 +15,10 @@ public class SystemStatusViewModel : ViewModelBase
     public string RamText { get; private set; } = "RAM: -";
 
     public string LastUpdateText { get; private set; } = "Ostatnie odswiezenie: -";
+
+    public SystemStats? LatestStats { get; private set; }
+
+    public IReadOnlyList<CpuCoreStats> LatestCpuCores { get; private set; } = [];
 
     public SystemStatusViewModel()
         : this(new WindowsSystemMonitorService())
@@ -29,6 +35,8 @@ public class SystemStatusViewModel : ViewModelBase
         try
         {
             var stats = Service.GetSystemStats();
+            LatestStats = stats;
+            LatestCpuCores = Service.GetCpuCores();
 
             CpuText = $"CPU: {stats.CpuUsagePercent:0.00}%";
             RamText = $"RAM: {FormatBytes(stats.UsedMemoryBytes)} / {FormatBytes(stats.TotalMemoryBytes)} ({stats.MemoryUsagePercent:0.00}%)";
@@ -36,6 +44,8 @@ public class SystemStatusViewModel : ViewModelBase
         }
         catch (Exception)
         {
+            LatestStats = null;
+            LatestCpuCores = [];
             CpuText = "CPU: -";
             RamText = "RAM: -";
         }
@@ -43,6 +53,8 @@ public class SystemStatusViewModel : ViewModelBase
         OnPropertyChanged(nameof(CpuText));
         OnPropertyChanged(nameof(RamText));
         OnPropertyChanged(nameof(LastUpdateText));
+        OnPropertyChanged(nameof(LatestStats));
+        OnPropertyChanged(nameof(LatestCpuCores));
 
         return Task.CompletedTask;
     }

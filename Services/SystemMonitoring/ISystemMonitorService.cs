@@ -7,5 +7,7 @@ public interface ISystemMonitorService
 {
     SystemStats GetSystemStats();
 
+    IReadOnlyList<CpuCoreStats> GetCpuCores();
+
     IReadOnlyList<ProcessInfo> GetProcesses();
 }
