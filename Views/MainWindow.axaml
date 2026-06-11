@@ -11,7 +11,7 @@
         x:Class="HardwareUsageMonitor.Views.MainWindow"
         x:Name="Root"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/logo.png"
         Title="HardwareUsageMonitor"
         Width="1000"
         Height="600"
