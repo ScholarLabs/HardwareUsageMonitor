@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HardwareUsageMonitor.Models;
 using HardwareUsageMonitor.Services.SystemMonitoring;
@@ -21,8 +22,17 @@ public class SystemStatusViewModel : ViewModelBase
     public IReadOnlyList<CpuCoreStats> LatestCpuCores { get; private set; } = [];
 
     public SystemStatusViewModel()
-        : this(new WindowsSystemMonitorService())
+        : this(CreatePlatformService())
     {
+    }
+
+    private static ISystemMonitorService CreatePlatformService()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return new WindowsSystemMonitorService();
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return new LinuxSystemMonitorService();
+        throw new PlatformNotSupportedException("Only Windows and Linux are supported.");
     }
 
     public SystemStatusViewModel(ISystemMonitorService service)
